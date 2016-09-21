@@ -12,6 +12,7 @@ and may not be redistributed without written permission.*/
 //Screen dimension constants
 const int SCREEN_WIDTH = 1000;
 const int SCREEN_HEIGHT = 600;
+
 int exit_flg = 0;
 
 //functions
@@ -40,13 +41,14 @@ int main( int argc, char* args[] )
 		}
 		else
 		{
-			//Get window surface
-		//	screen = SDL_GetWindowSurface( window );
+			//init
 	 		Uint32 windowID = SDL_GetWindowID(window);
+			SDL_Rect text_surface_pos;
+			SDL_Surface* text_surface;
+			SDL_Rect display_surface_pos;
+			SDL_Surface* display_surface;
+			SDL_Rect border;
 
-			//Fill the surface white and flush changes
-		//	SDL_FillRect( screen, NULL, SDL_MapRGB( screen->format, 0xFF, 0xFF, 0xFF ) );	
-		//	SDL_UpdateWindowSurface( window );
 
 			//main event loop
 			SDL_Event event;
@@ -60,10 +62,35 @@ int main( int argc, char* args[] )
 							if(event.window.windowID==windowID){
 								switch(event.window.event){	
 									case SDL_WINDOWEVENT_SIZE_CHANGED: 
-										screen = SDL_GetWindowSurface( window );
+										screen = SDL_GetWindowSurface( window );	
+										SDL_FillRect( screen, NULL, SDL_MapRGB( screen->format, 0x33, 0x33, 0x33 ) );
 
-										//fill screen with white and flush changes
-										SDL_FillRect( screen, NULL, SDL_MapRGB( screen->format, 0xFF, 0xFF, 0xFF ) );
+										if(screen->w > screen->h){
+											display_surface_pos = {screen->w/2 + 2, 5, screen->w/2 - 7, screen->h - 10};
+											border = {display_surface_pos.x-1, display_surface_pos.y-1, display_surface_pos.w+2, display_surface_pos.h+2}; 
+											display_surface = SDL_CreateRGBSurface(0,display_surface_pos.w,display_surface_pos.h,SCREEN_BPP,0,0,0,0);
+											SDL_FillRect( screen, &border, SDL_MapRGB( screen->format, 0xFF, 0xEF, 0xD9 ) );
+											SDL_FillRect( screen, &display_surface_pos, SDL_MapRGB( screen->format, 0x00, 0x00, 0x00 ) );
+
+											text_surface_pos = {5, 5, screen->w/2 - 7, screen->h - 10};
+											border = {text_surface_pos.x-1, text_surface_pos.y-1, text_surface_pos.w+2, text_surface_pos.h+2}; 
+											display_surface = SDL_CreateRGBSurface(0,text_surface_pos.w,text_surface_pos.h,SCREEN_BPP,0,0,0,0);
+											SDL_FillRect( screen, &border, SDL_MapRGB( screen->format, 0xFF, 0xEF, 0xD9) );
+											SDL_FillRect( screen, &text_surface_pos, SDL_MapRGB( screen->format, 0xDB, 0xC3, 0xA0 ) );
+										}else{	
+											display_surface_pos = {5, 5, screen->w -10, screen->h/2 - 7};
+											border = {display_surface_pos.x-1, display_surface_pos.y-1, display_surface_pos.w+2, display_surface_pos.h+2}; 
+											display_surface = SDL_CreateRGBSurface(0,display_surface_pos.w,display_surface_pos.h,SCREEN_BPP,0,0,0,0);
+											SDL_FillRect( screen, &border, SDL_MapRGB( screen->format, 0xFF, 0xEF, 0xD9 ) );
+											SDL_FillRect( screen, &display_surface_pos, SDL_MapRGB( screen->format, 0x00, 0x00, 0x00 ) );
+
+											text_surface_pos = {5, screen->h/2 + 2, screen->w -10 , screen->h/2 - 7};
+											border = {text_surface_pos.x-1, text_surface_pos.y-1, text_surface_pos.w+2, text_surface_pos.h+2}; 
+											display_surface = SDL_CreateRGBSurface(0,text_surface_pos.w,text_surface_pos.h,SCREEN_BPP,0,0,0,0);
+											SDL_FillRect( screen, &border, SDL_MapRGB( screen->format, 0xFF, 0xEF, 0xD9) );
+											SDL_FillRect( screen, &text_surface_pos, SDL_MapRGB( screen->format, 0xDB, 0xC3, 0xA0 ) );
+										}
+
 										SDL_UpdateWindowSurface( window );
 										break;
 									case SDL_WINDOWEVENT_CLOSE:  
@@ -86,7 +113,9 @@ int main( int argc, char* args[] )
 							exit_flg = true; 
 							break;
 					}
-				} 
+				}
+
+				//draw subscreen
 			} 
 		}
 	}
